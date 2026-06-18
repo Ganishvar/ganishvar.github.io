@@ -412,7 +412,7 @@ body.virtuoso-theme {
 .chip-block:hover .block-well {
     fill: #1D2330;
     stroke: var(--text-accent);
-    transform: scale(1.03);
+    transform: none;
 }
 
 /* SVG Text elements inside blocks */
