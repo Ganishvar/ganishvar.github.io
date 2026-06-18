@@ -386,16 +386,54 @@ body.virtuoso-theme {
 }
 
 /* Translucent stipple styles for layout layers in SVG */
-.layer-dt { stroke: var(--dt) !important; fill-opacity: 0.2; }
-.layer-metal3 { fill: url(#pat-metal3) !important; fill-opacity: 0.65; stroke: var(--metal3) !important; stroke-width: 1.5px; }
-.layer-metal2 { fill: url(#pat-metal2) !important; fill-opacity: 0.65; stroke: var(--metal2) !important; stroke-width: 1.5px; }
-.layer-metal1 { fill: url(#pat-metal1) !important; fill-opacity: 0.65; stroke: var(--metal1) !important; stroke-width: 1.5px; }
-.layer-poly { fill: url(#pat-poly) !important; fill-opacity: 0.65; stroke: var(--poly) !important; stroke-width: 1px; }
-.layer-nwell { fill: url(#pat-nwell) !important; fill-opacity: 0.45; stroke: var(--nwell) !important; stroke-width: 1.5px; }
-.layer-pwell { fill: url(#pat-pwell) !important; fill-opacity: 0.35; stroke: var(--pwell) !important; stroke-width: 1.5px; }
-.layer-via { fill: var(--via) !important; stroke: #FFFFFF !important; stroke-width: 1px; }
-.layer-contact { fill: var(--contact) !important; stroke: #FFFFFF !important; stroke-width: 1px; }
+.layer-dt {
+    fill: var(--dt);
+    fill-opacity: 0.15;
+    stroke: var(--dt);
+    stroke-width: 2px;
+}
 
+.layer-metal3 {
+    fill: var(--metal3);
+    fill-opacity: 0.55;
+    stroke: var(--metal3);
+    stroke-width: 1.5px;
+}
+
+.layer-metal2 {
+    fill: var(--metal2);
+    fill-opacity: 0.55;
+    stroke: var(--metal2);
+    stroke-width: 1.5px;
+}
+
+.layer-metal1 {
+    fill: var(--metal1);
+    fill-opacity: 0.55;
+    stroke: var(--metal1);
+    stroke-width: 1.5px;
+}
+
+.layer-poly {
+    fill: var(--poly);
+    fill-opacity: 0.55;
+    stroke: var(--poly);
+    stroke-width: 1px;
+}
+
+.layer-nwell {
+    fill: var(--nwell);
+    fill-opacity: 0.30;
+    stroke: var(--nwell);
+    stroke-width: 1.5px;
+}
+
+.layer-pwell {
+    fill: var(--pwell);
+    fill-opacity: 0.25;
+    stroke: var(--pwell);
+    stroke-width: 1.5px;
+}
 /* SVG interactive blocks */
 .chip-block {
     cursor: pointer;
