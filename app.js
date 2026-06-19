@@ -566,6 +566,9 @@ const PROJECTS_DATA = {
 // ==================== DOM QUERY SELECTORS ====================
 
 const DOM = {
+    mobileMenuToggle: document.getElementById('mobile-menu-toggle'),
+    navLinks: document.querySelector('.nav-links'),
+    heroTerminalText: document.getElementById('hero-terminal-text'),
     canvasContainer: document.getElementById('canvas-container'),
     viewport: document.getElementById('viewport'),
     siliconChip: document.getElementById('silicon-chip'),
@@ -596,22 +599,105 @@ const DOM = {
     simConsoleLog: document.getElementById('sim-console-log'),
     simHudCardContent: document.getElementById('sim-hud-card-content'),
     capSlider: document.getElementById('cap-slider'),
-    capValueDisplay: document.getElementById('cap-value-display')
+    capValueDisplay: document.getElementById('cap-value-display'),
+
+    // Electrical project panel
+    elecProjectGrid: document.getElementById('elec-project-grid'),
+    elecDetailPanel: document.getElementById('elec-detail-panel'),
+    elecDetailBackBtn: document.getElementById('elec-detail-back-btn'),
+    elecDetailTitle: document.getElementById('elec-detail-title'),
+    elecDetailTime: document.getElementById('elec-detail-time'),
+    elecDetailTools: document.getElementById('elec-detail-tools'),
+    elecDetailCore: document.getElementById('elec-detail-core'),
+    elecDetailResults: document.getElementById('elec-detail-results')
 };
 
 // ==================== INITIALIZATION ====================
 
 function initApp() {
+    sanitizeLayoutProjectData();
+    setupHeroTerminal();
     setupEventListeners();
     setupElectricalHierarchyHandlers();
 }
 
+function sanitizeLayoutProjectData() {
+    const allowedPropKeys = new Set([
+        'Cell Name',
+        'Process Node',
+        'DRC / LVS',
+        'Hierarchy Parent',
+        'Shielding',
+        'Deep Trench',
+        'Substrate Doping',
+        'Isolation Level'
+    ]);
+
+    for (const [projectKey, project] of Object.entries(PROJECTS_DATA)) {
+        if (projectKey.endsWith('_sim')) continue;
+
+        for (const node of Object.values(project.levels)) {
+            node.specs = '';
+            node.role = '';
+            node.props = Object.fromEntries(
+                Object.entries(node.props || {}).filter(([key]) => allowedPropKeys.has(key))
+            );
+        }
+    }
+}
+
+function setupHeroTerminal() {
+    if (!DOM.heroTerminalText) return;
+
+    const words = [
+        'Texas Instruments Internship',
+        'Analog Layout',
+        'DRC',
+        'LVS',
+        '65 and 130 nm',
+        'Parasitic Evaluation',
+        'SKILL Automation'
+    ];
+    let index = 0;
+
+    DOM.heroTerminalText.innerText = words[index];
+    setInterval(() => {
+        index = (index + 1) % words.length;
+        DOM.heroTerminalText.innerText = words[index];
+    }, 2000);
+}
+
 function setupEventListeners() {
-    // Zooming into top level chip blocks
-    document.querySelectorAll('.chip-block').forEach(block => {
+    if (DOM.mobileMenuToggle && DOM.navLinks) {
+        DOM.mobileMenuToggle.addEventListener('click', () => {
+            const isOpen = DOM.navLinks.classList.toggle('open');
+            DOM.mobileMenuToggle.setAttribute('aria-expanded', String(isOpen));
+        });
+
+        DOM.navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                DOM.navLinks.classList.remove('open');
+                DOM.mobileMenuToggle.setAttribute('aria-expanded', 'false');
+            });
+        });
+    }
+
+    // Jump from chip floorplan blocks into the matching inline sections.
+    document.querySelectorAll('.chip-block, .chip-nav-block').forEach(block => {
+        const blockName = block.dataset.block || block.id.replace('block-', '');
+        block.setAttribute('role', 'button');
+        block.setAttribute('tabindex', '0');
+        block.setAttribute('aria-label', blockName.replace(/-/g, ' ') + ' section');
+
         block.addEventListener('click', (e) => {
-            const blockId = block.id.replace('block-', '');
-            zoomIntoBlock(blockId, block);
+            jumpToBlockSection(blockName);
+        });
+
+        block.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                jumpToBlockSection(blockName);
+            }
         });
     });
 
@@ -625,9 +711,17 @@ function setupEventListeners() {
 
     // Layout Explorer clicks (6 cards)
     document.querySelectorAll('.proj-explorer-card').forEach(card => {
-        card.addEventListener('click', () => {
+        const openProject = () => {
             const projId = card.getAttribute('data-project');
             initProject(projId);
+        };
+
+        card.addEventListener('click', openProject);
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openProject();
+            }
         });
     });
 
@@ -640,6 +734,9 @@ function setupEventListeners() {
     
     // Capacitance slider change event
     if (DOM.capSlider) {
+        DOM.capSlider.value = String(state.pathbufCap);
+        DOM.capValueDisplay.innerText = state.pathbufCap + " fF";
+
         DOM.capSlider.addEventListener('input', (e) => {
             state.pathbufCap = parseInt(e.target.value);
             DOM.capValueDisplay.innerText = state.pathbufCap + " fF";
@@ -663,53 +760,29 @@ function addLogLine(consoleElement, text, type = 'output', delay = 0) {
 
 // ==================== TOP-LEVEL ORIGIN ZOOM & NAVIGATION ====================
 
-function zoomIntoBlock(blockId, blockElement) {
+function jumpToBlockSection(blockId) {
     state.activeBlock = blockId;
+    const targetContent = document.getElementById(`content-${blockId}`);
 
-    // Get block bounding box and translation coordinates dynamically
-    const bbox = blockElement.getBBox();
-    const transformAttr = blockElement.getAttribute('transform');
-    const matches = transformAttr.match(/translate\(([\d.-]+),\s*([\d.-]+)\)/);
-    const transX = matches ? parseFloat(matches[1]) : 0;
-    const transY = matches ? parseFloat(matches[2]) : 0;
-    
-    // Compute SVG absolute center
-    const blockCX = transX + bbox.width / 2;
-    const blockCY = transY + bbox.height / 2;
-    
-    // Percentage translation origin coordinate relative to SVG viewbox (500 x 1300)
-    const originX = (blockCX / 500) * 100;
-    const originY = (blockCY / 1300) * 100;
-    
-    // Perform transform on the SVG directly
-    DOM.siliconChip.style.transformOrigin = `${originX}% ${originY}%`;
-    DOM.siliconChip.style.transform = "scale(3.5)";
+    if (targetContent) {
+        targetContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
-    // Open overlay panel after transition
-    setTimeout(() => {
-        DOM.overlayContainer.classList.add('active');
-        document.querySelectorAll('.overlay-content').forEach(c => c.classList.remove('active'));
-        
-        const targetContent = document.getElementById(`content-${blockId}`);
-        if (targetContent) {
-            targetContent.classList.add('active');
-        }
-        
-        // Reset sub project explorer state if opening Layout Projects
-        if (blockId === 'layout-projects') {
-            exitActiveProject();
-        }
-        
-        DOM.cellDisplayHUD.innerText = `${blockId.toUpperCase().replace('-', '_')}_CELL(layout)`;
-    }, 350);
+    // Reset sub project explorer state if opening Layout Projects
+    if (blockId === 'layout-projects') {
+        exitActiveProject();
+    }
+
+    DOM.cellDisplayHUD.innerText = `${blockId.toUpperCase().replace('-', '_')}_CELL(layout)`;
+}
+
+function zoomIntoBlock(blockId, blockElement) {
+    jumpToBlockSection(blockId);
 }
 
 function zoomBackToTop() {
     state.activeBlock = null;
-    DOM.overlayContainer.classList.remove('active');
-    
-    // Reset transform scale
-    DOM.siliconChip.style.transform = "scale(1)";
+    document.getElementById('chip-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
     DOM.cellDisplayHUD.innerText = 'ganishvar_chip(layout)';
 }
 
@@ -780,9 +853,20 @@ function renderActiveDrilldownNode() {
     
     // Bind click events on injected subcell graphics
     DOM.drilldownGraphics.querySelectorAll('.drill-cell').forEach(cell => {
-        cell.addEventListener('click', () => {
+        cell.setAttribute('role', 'button');
+        cell.setAttribute('tabindex', '0');
+
+        const openCell = () => {
             const nextNodeKey = cell.getAttribute('data-goto');
             drillDownInto(nextNodeKey);
+        };
+
+        cell.addEventListener('click', openCell);
+        cell.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openCell();
+            }
         });
     });
     
@@ -822,8 +906,10 @@ function setupActiveSimulatorView() {
     DOM.simulatorCrumbs.innerText = `Hierarchy: top / Layout Projects / ${proj.title.toUpperCase().replace(/\s+/g, '_')}`;
     DOM.cellDisplayHUD.innerText = `${projKey.toUpperCase()}_SIM(layout)`;
 
-    // Show corresponding SVG container
-    document.querySelectorAll('.sim-panel-body').forEach(b => b.classList.add('hidden'));
+    // Hide all simulator panels first by adding 'hidden' class
+    document.getElementById('sim-body-router').classList.add('hidden');
+    document.getElementById('sim-body-atop').classList.add('hidden');
+    document.getElementById('sim-body-pathbuf').classList.add('hidden');
     
     resetActiveSimulator();
     
@@ -842,9 +928,9 @@ function setupActiveSimulatorView() {
 function updateRouterHUD() {
     DOM.simHudCardContent.innerHTML = `
         <table>
-            <tr><td>Routing Mode:</td><td>Inside Digital Block Core</td></tr>
-            <tr><td>Target Elements:</td><td>Standard cells, Pins & Pads</td></tr>
-            <tr><td>Design Node:</td><td>130nm / 65nm compatible</td></tr>
+            <tr><td>Routing Mode:</td><td>Pin-to-Pin Interconnect</td></tr>
+            <tr><td>Pin Configuration:</td><td>Input Buffer ↔ Mid ↔ Output</td></tr>
+            <tr><td>Routing Engine:</td><td>SKILL A* Maze Search</td></tr>
             <tr><td>Routing Status:</td><td class="sim-status-passed">Ready</td></tr>
         </table>
     `;
@@ -853,10 +939,10 @@ function updateRouterHUD() {
 function updateAtopHUD() {
     DOM.simHudCardContent.innerHTML = `
         <table>
-            <tr><td>Block Cell:</td><td>BLOCK_LEVEL_CELL</td></tr>
-            <tr><td>Top Level Net:</td><td>core_output_buffer</td></tr>
-            <tr><td>Analysis Method:</td><td>XOR Layout Comparison</td></tr>
-            <tr><td>Top Overlaps:</td><td class="sim-status-passed">Ready to Extract</td></tr>
+            <tr><td>Analysis Block:</td><td>BLOCK_LEVEL_CELL</td></tr>
+            <tr><td>Chip Top Routing:</td><td>Metal 2 overlaps parsed</td></tr>
+            <tr><td>Substrate noise:</td><td>XOR extraction enabled</td></tr>
+            <tr><td>Status:</td><td class="sim-status-passed">Idle / Ready</td></tr>
         </table>
     `;
 }
@@ -867,14 +953,14 @@ function updatePathbufHUD() {
     const statusText = isBufRequired ? "REQUIRED" : "NOT REQUIRED";
     const statusClass = isBufRequired ? "sim-status-failed" : "sim-status-passed";
     
-    const delay = isBufRequired ? (state.pathbufCap * 0.12 + 10.5) : (state.pathbufCap * 0.48 + 8.2);
+    const delay = isBufRequired ? (state.pathbufCap * 0.14 + 12.0) : (state.pathbufCap * 0.52 + 7.5);
     
     DOM.simHudCardContent.innerHTML = `
         <table>
-            <tr><td>Load Capacitance:</td><td>${state.pathbufCap.toFixed(1)} fF</td></tr>
-            <tr><td>Capacitance Limit:</td><td>${threshold.toFixed(1)} fF</td></tr>
-            <tr><td>Evaluation:</td><td class="${statusClass}">${statusText}</td></tr>
-            <tr><td>Interconnect Delay:</td><td>${delay.toFixed(1)} ps</td></tr>
+            <tr><td>Measured Cload:</td><td>${state.pathbufCap.toFixed(1)} fF</td></tr>
+            <tr><td>Design Cap Limit:</td><td>${threshold.toFixed(1)} fF</td></tr>
+            <tr><td>Slew Check:</td><td class="${statusClass}">${statusText}</td></tr>
+            <tr><td>Estimated Delay:</td><td>${delay.toFixed(1)} ps</td></tr>
         </table>
     `;
 }
@@ -882,7 +968,6 @@ function updatePathbufHUD() {
 function runActiveSimulator() {
     // Ensure a SKILL simulation project is active before proceeding
     if (!state.activeProject || !state.activeProject.endsWith('_sim')) {
-        // Log a warning in the simulator console if available
         if (DOM.simConsoleLog) {
             addLogLine(DOM.simConsoleLog, 'Simulation can only be run within SKILL project simulators.', 'error');
         }
@@ -906,12 +991,18 @@ function resetActiveSimulator() {
     if (projKey === 'router') {
         const route1 = document.getElementById('sim-route-path-1');
         const route2 = document.getElementById('sim-route-path-2');
+        const route3 = document.getElementById('sim-route-path-3');
+        
         route1.classList.remove('animate-wiring');
         route2.classList.remove('animate-wiring');
+        route3.classList.remove('animate-wiring');
+        
         route1.style.strokeDashoffset = '250';
         route1.style.strokeOpacity = '0';
         route2.style.strokeDashoffset = '250';
         route2.style.strokeOpacity = '0';
+        route3.style.strokeDashoffset = '250';
+        route3.style.strokeOpacity = '0';
         
         document.getElementById('sim-r-via-1').style.opacity = '0';
         document.getElementById('sim-r-via-2').style.opacity = '0';
@@ -920,8 +1011,7 @@ function resetActiveSimulator() {
         document.getElementById('sim-atop-parasitics').style.opacity = '0';
         updateAtopHUD();
     } else if (projKey === 'pathbuf') {
-        document.getElementById('sim-pb-wave-in').style.opacity = '0.4';
-        document.getElementById('sim-pb-wave-out').style.opacity = '0';
+        document.getElementById('pathbuf-optional').style.opacity = '0'; // hide optional buffer
         updatePathbufHUD();
     }
 }
@@ -929,138 +1019,201 @@ function resetActiveSimulator() {
 // SIMULATOR RUN FUNCTIONS
 function runRouterSimulation() {
     const consoleLog = DOM.simConsoleLog;
-    consoleLog.innerHTML = `<div class="term-line cmd">> dbOpenCellViewByType("design_lib" "digital_core" "layout")</div>`;
+    consoleLog.innerHTML = `<div class="term-line cmd">> cv = dbOpenCellViewByType("design_lib" "digital_core" "layout")</div>`;
     
-    addLogLine(consoleLog, "INFO: SKILL Autorouter initialized inside digital core block...", "warn", 250);
-    addLogLine(consoleLog, "INFO: Mapping pin terminals & standard cells...", "output", 500);
-    addLogLine(consoleLog, "INFO: Routing Net 1 (AND_GATE inputs to inputs pin)...", "output", 750);
+    addLogLine(consoleLog, "INFO: Initializing SKILL pin-to-pin maze routing routing engine...", "warn", 200);
+    addLogLine(consoleLog, "INFO: Mapping pin vectors: Input Buffer [P1,P2] ↔ Standard Cell inputs...", "output", 400);
+    addLogLine(consoleLog, "INFO: Connecting Input Buffer to Standard Cells...", "output", 650);
     
-    // Trigger SVG animations
+    // Trigger animations sequentially
     setTimeout(() => {
         const route1 = document.getElementById('sim-route-path-1');
         route1.classList.add('animate-wiring');
         route1.style.strokeDashoffset = '0';
-    }, 850);
-    
-    addLogLine(consoleLog, "INFO: Routing Net 2 (AND_GATE output to INV_GATE input)...", "output", 1200);
-    
+    }, 750);
+
     setTimeout(() => {
         const route2 = document.getElementById('sim-route-path-2');
         route2.classList.add('animate-wiring');
         route2.style.strokeDashoffset = '0';
-    }, 1300);
+    }, 1100);
     
-    addLogLine(consoleLog, "INFO: Standard cells routing segments created in Metal 1 (horizontal) and Metal 2 (vertical).", "output", 1600);
+    addLogLine(consoleLog, "INFO: Connecting Standard Cells to Output Buffer pins...", "output", 1300);
+    
+    setTimeout(() => {
+        const route3 = document.getElementById('sim-route-path-3');
+        route3.classList.add('animate-wiring');
+        route3.style.strokeDashoffset = '0';
+    }, 1500);
     
     setTimeout(() => {
         document.getElementById('sim-r-via-1').style.opacity = '1';
         document.getElementById('sim-r-via-2').style.opacity = '1';
-    }, 1800);
-    
-    addLogLine(consoleLog, "INFO: Wiring complete. Checking DRC guidelines inside digital block...", "warn", 2100);
+        addLogLine(consoleLog, "INFO: Confined layer transitions complete. Placing VIAs...", "warn", 100);
+    }, 1900);
     
     setTimeout(() => {
-        addLogLine(consoleLog, "DRC CHECK: 0 violations found. CLEAN.", "output", 200);
-        addLogLine(consoleLog, "LVS CHECK: Netlist matches Layout. CLEAN.", "output", 400);
-        addLogLine(consoleLog, "CELL DATABASE SAVED successfully.", "output", 600);
+        addLogLine(consoleLog, "DRC CHECK: 0 violations inside Digital Core. CLEAN.", "output", 200);
+        addLogLine(consoleLog, "LVS CHECK: Layout matches custom schematic mapping. CLEAN.", "output", 400);
+        addLogLine(consoleLog, "SKILL SUCCESS: Cells autorouted successfully.", "output", 600);
         
         DOM.simHudCardContent.innerHTML = `
             <table>
-                <tr><td>Routing Mode:</td><td>Inside Digital Block Core</td></tr>
-                <tr><td>Nets Routed:</td><td>2 Nets (Standard Cells)</td></tr>
-                <tr><td>DRC Violations:</td><td>0 (Clean)</td></tr>
-                <tr><td>LVS Status:</td><td class="sim-status-passed">Clean / Matched</td></tr>
+                <tr><td>Routing Mode:</td><td>Complete (Input ↔ Mid ↔ Output)</td></tr>
+                <tr><td>Nets Hooked:</td><td>3 Nets Routed</td></tr>
+                <tr><td>Via Elements:</td><td>2 Vias Placed</td></tr>
+                <tr><td>Status:</td><td class="sim-status-passed">DRC/LVS Clean</td></tr>
             </table>
         `;
-    }, 2500);
+    }, 2400);
 }
 
 function runAtopSimulation() {
     const consoleLog = DOM.simConsoleLog;
     consoleLog.innerHTML = `<div class="term-line cmd">> load("atop_parasitics_analyzer.il")</div>`;
     
-    addLogLine(consoleLog, "INFO: Extracting block-level cell layers...", "output", 300);
-    addLogLine(consoleLog, "INFO: Performing Boolean XOR between top level layout and block cell...", "warn", 600);
+    addLogLine(consoleLog, "INFO: Initiating ATOP block-level parasitic extractor...", "warn", 250);
+    addLogLine(consoleLog, "INFO: Reading top-level chip routing overlay database...", "output", 500);
+    addLogLine(consoleLog, "INFO: Scanning overlapping top metal tracks passing above BLOCK_LEVEL_CELL...", "output", 750);
     
     setTimeout(() => {
         document.getElementById('sim-atop-parasitics').style.opacity = '1';
+        addLogLine(consoleLog, "INFO: Boolean XOR matching identifies Metal 2 overlaps directly over Block Metal 1...", "warn", 100);
     }, 1000);
     
-    addLogLine(consoleLog, "INFO: Extracted Top-Level Metal 2 routing overlaps directly above Block Metal 1.", "output", 1200);
-    addLogLine(consoleLog, "INFO: Extracted coupling capacitance Cc = 28.5 fF.", "output", 1600);
-    addLogLine(consoleLog, "INFO: Extracted block routing parasitics: Rp = 0.85 Ohm, Cp = 120.0 fF.", "output", 2000);
-    addLogLine(consoleLog, "INFO: Total accumulated cell parasitics: R = 0.85 Ohm, C = 148.5 fF.", "warn", 2400);
-    addLogLine(consoleLog, "INFO: Netlist update: layout block parasitics successfully matched.", "output", 2850);
+    addLogLine(consoleLog, "INFO: Extracted Coupling Cap (Cc) between Top M2 & Block M1 = 32.4 fF.", "output", 1400);
+    addLogLine(consoleLog, "INFO: Extracted internal block parasitics: Rp = 1.15 Ohm, Cp = 135.0 fF.", "output", 1850);
+    addLogLine(consoleLog, "INFO: Total calculated block parasitics (including top overlaps): R = 1.15 Ohm, C = 167.4 fF.", "warn", 2300);
+    addLogLine(consoleLog, "INFO: Extracted netlist updated with chip-level parasitic overlays.", "output", 2700);
     
     setTimeout(() => {
         DOM.simHudCardContent.innerHTML = `
             <table>
-                <tr><td>Block Cell:</td><td>BLOCK_LEVEL_CELL</td></tr>
-                <tr><td>Coupling Cap (Cc):</td><td>28.5 fF (Extracted)</td></tr>
-                <tr><td>Total Parasitics:</td><td>R=0.85 Ohm, C=148.5 fF</td></tr>
-                <tr><td>Extraction Status:</td><td class="sim-status-passed">Complete (XOR Clean)</td></tr>
+                <tr><td>Analysis Block:</td><td>BLOCK_LEVEL_CELL</td></tr>
+                <tr><td>Cc (Coupled Overlay):</td><td>32.4 fF (Extracted)</td></tr>
+                <tr><td>Netlist Parasitics:</td><td>R=1.15 Ohm, C=167.4 fF</td></tr>
+                <tr><td>Status:</td><td class="sim-status-passed">Extraction Saved</td></tr>
             </table>
         `;
-    }, 2850);
+    }, 2700);
 }
 
 function runPathbufSimulation() {
     const consoleLog = DOM.simConsoleLog;
     consoleLog.innerHTML = `<div class="term-line cmd">> load("pathbuffer_analyzer.il")</div>`;
     
-    addLogLine(consoleLog, "INFO: Starting delay and slew rate scan along buffer signal path...", "warn", 300);
-    addLogLine(consoleLog, "INFO: Sensed capacitance loads on driver pins...", "output", 650);
+    addLogLine(consoleLog, "INFO: Scanning path load capacitance limits along active node...", "warn", 250);
     
-    setTimeout(() => {
-        document.getElementById('sim-pb-wave-in').style.opacity = '1';
-        document.getElementById('sim-pb-wave-out').style.opacity = '1';
-    }, 900);
+    // Visibility of optional buffer will be set after capacitance evaluation
     
     const threshold = 25.0;
     const isBufRequired = state.pathbufCap > threshold;
-    const delay = isBufRequired ? (state.pathbufCap * 0.12 + 10.5) : (state.pathbufCap * 0.48 + 8.2);
+    const delay = isBufRequired ? (state.pathbufCap * 0.14 + 12.0) : (state.pathbufCap * 0.52 + 7.5);
     
-    addLogLine(consoleLog, `INFO: Sensed load capacitance Cload = ${state.pathbufCap.toFixed(1)} fF (Threshold limit = 25.0 fF).`, "output", 1200);
+    addLogLine(consoleLog, `INFO: Measured Cload = ${state.pathbufCap.toFixed(1)} fF (Design specification limit = 25.0 fF).`, "output", 1100);
+
+    // Show or hide optional path buffer based on capacitance
+    if (isBufRequired) {
+    const el = document.getElementById('pathbuf-optional');
+    el.style.opacity = '1';
+    el.style.display = 'block';
+    el.style.visibility = 'visible';
+} else {
+    const el = document.getElementById('pathbuf-optional');
+    el.style.opacity = '0';
+    el.style.display = 'none';
+    el.style.visibility = 'hidden';
+}
     
     if (isBufRequired) {
-        addLogLine(consoleLog, "WARNING: Load capacitance exceeds threshold limit. Buffer delay skew detected.", "error", 1600);
-        addLogLine(consoleLog, "RECOMMENDATION: Path buffer cell insertion is REQUIRED.", "error", 2000);
-        addLogLine(consoleLog, `INFO: Optimized delay calculated: tPD = ${delay.toFixed(1)} ps (Buffered).`, "output", 2400);
+        addLogLine(consoleLog, "WARNING: Load capacitance exceeds safety margins. Delay skew detected.", "error", 1500);
+        addLogLine(consoleLog, "RECOMMENDATION: Path buffer insertion is REQUIRED to prevent signal decay.", "error", 1900);
+        addLogLine(consoleLog, `INFO: Buffered propagation delay: tPD = ${delay.toFixed(1)} ps.`, "output", 2300);
     } else {
-        addLogLine(consoleLog, "INFO: Load capacitance is within margins. Signal rises cleanly.", "output", 1600);
-        addLogLine(consoleLog, "RECOMMENDATION: Path buffer insertion NOT REQUIRED.", "output", 2000);
-        addLogLine(consoleLog, `INFO: Interconnect delay: tPD = ${delay.toFixed(1)} ps.`, "output", 2400);
+        addLogLine(consoleLog, "INFO: Load capacitance is clean & within margins.", "output", 1500);
+        addLogLine(consoleLog, "RECOMMENDATION: Path buffer insertion is NOT REQUIRED.", "output", 1900);
+        addLogLine(consoleLog, `INFO: Net propagation delay: tPD = ${delay.toFixed(1)} ps.`, "output", 2300);
     }
     
-    addLogLine(consoleLog, "INFO: Path delay verification sweep complete.", "warn", 2800);
+    addLogLine(consoleLog, "INFO: SKILL delay scan sweep complete.", "warn", 2700);
     
     setTimeout(() => {
         updatePathbufHUD();
-    }, 2800);
+    }, 2700);
 }
 
 // ==================== INTERACTIVE ELECTRICAL SUB-CELLS ====================
 
+const ELECTRICAL_PROJECTS = {
+    canbus: {
+        title: 'Development of Low-Cost ECU Using CAN Bus Protocol',
+        time: 'To be added.',
+        tools: 'STM32, Raspberry Pi, MCP2515, TJA1040, CAN Bus modules.',
+        core: 'Built a low-cost ECU communication prototype around CAN Bus messaging and embedded controller nodes.',
+        results: 'To be added.'
+    },
+    v2l: {
+        title: 'Vehicle-to-Load Converter Design',
+        time: 'To be added.',
+        tools: 'To be added.',
+        core: 'Converter design project focused on vehicle-to-load power transfer concepts.',
+        results: 'To be added.'
+    },
+    acc: {
+        title: 'Adaptive Cruise & Obstacle Detection',
+        time: 'To be added.',
+        tools: 'To be added.',
+        core: 'Embedded sensing and control project for obstacle-aware vehicle behavior.',
+        results: 'To be added.'
+    },
+    motor: {
+        title: 'Predictive Maintenance on DC Motor',
+        time: 'To be added.',
+        tools: 'To be added.',
+        core: 'Fault-analysis project focused on monitoring motor condition and maintenance indicators.',
+        results: 'To be added.'
+    },
+    strawberry: {
+        title: 'Strawberry Disease Detection Using CNN',
+        time: 'To be added.',
+        tools: 'Raspberry Pi camera module, CNN model.',
+        core: 'Edge AI project for detecting strawberry leaf disease from camera input.',
+        results: 'To be added.'
+    }
+};
+
 function setupElectricalHierarchyHandlers() {
-    document.querySelectorAll('.sub-block-item').forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const sub = item.getAttribute('data-elec-sub');
-            
-            document.querySelectorAll('.sub-block-item').forEach(t => t.style.borderColor = 'var(--border-color)');
-            item.style.borderColor = 'var(--text-accent)';
-            
-            let alertMsg = "";
-            if (sub === 'stm32') {
-                alertMsg = "STM32 Master Node details:\n- Microcontroller: STM32F103 (ARM Cortex-M3)\n- Role: Polls ADC sensor pins at high frequencies, runs priority scheduling, and formats payload bytes for CAN frame transmission.\n- Verification: Real-time execution validated via oscilloscopes and Logic Analyzers.";
-            } else if (sub === 'rpi4') {
-                alertMsg = "Raspberry Pi Coprocessor details:\n- System: Raspberry Pi 4 Model B (4GB RAM)\n- Role: Operates as diagnostic logger. Buffers incoming CAN messages, renders real-time dials on web panels, and streams data remotely over Wi-Fi.\n- OS: Custom Linux Kernel.";
-            } else if (sub === 'can') {
-                alertMsg = "CAN Transceiver Node details:\n- Controller: MCP2515 (SPI to CAN Standalone Controller)\n- Transceiver: TJA1040 (High-speed CAN Physical Layer)\n- Role: Translates logical CAN signals from MCP2515 to physical differential bus voltages. Built with bus termination switches (120 Ohm) and ESD clamp lines.";
-            }
-            alert(alertMsg);
+    if (!DOM.elecProjectGrid) return;
+
+    DOM.elecProjectGrid.querySelectorAll('.elec-proj-card').forEach(card => {
+        card.addEventListener('click', () => {
+            renderElectricalProject(card.getAttribute('data-elec-project'));
         });
     });
+
+    if (DOM.elecDetailBackBtn) {
+        DOM.elecDetailBackBtn.addEventListener('click', exitElectricalProject);
+    }
+}
+
+function renderElectricalProject(projectKey) {
+    const project = ELECTRICAL_PROJECTS[projectKey] || ELECTRICAL_PROJECTS.canbus;
+
+    DOM.elecDetailTitle.innerText = project.title;
+    DOM.elecDetailTime.innerText = project.time;
+    DOM.elecDetailTools.innerText = project.tools;
+    DOM.elecDetailCore.innerText = project.core;
+    DOM.elecDetailResults.innerText = project.results;
+
+    DOM.elecProjectGrid.classList.add('hidden');
+    DOM.elecDetailPanel.classList.remove('hidden');
+    DOM.elecDetailPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function exitElectricalProject() {
+    DOM.elecDetailPanel.classList.add('hidden');
+    DOM.elecProjectGrid.classList.remove('hidden');
+    DOM.elecProjectGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // Start app
