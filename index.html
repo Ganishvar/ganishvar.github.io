@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ganishvar S | Analog Layout Engineer Portfolio</title>
+    <meta name="description" content="Portfolio of Ganishvar S, an Analog Layout Engineer specialized in Analog and Mixed Signal IC Layouts (130nm & 65nm Technology nodes).">
+    
+    <!-- Google Fonts: Inter for general text, Fira Code for code blocks/specs -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="modern-theme">
+
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#hero" class="nav-logo">GANISHVAR S</a>
+            <div class="nav-links">
+                <a href="#hero">Home</a>
+                <a href="#chip-section">Interactive Chip</a>
+                <a href="#contact">Contact</a>
+                <a href="mailto:ganishvar@gmail.com" class="nav-btn">Get in Touch</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="hero" class="hero-section">
+        <div class="hero-glow"></div>
+        <div class="hero-container">
+            <span class="hero-tagline">ANALOG LAYOUT ENGINEER</span>
+            <h1 class="hero-title">Ganishvar S</h1>
+            <p class="hero-subtitle">
+                Specializing in <strong>Analog and Mixed Signal IC Layouts</strong> across <strong>130nm and 65nm</strong> technology nodes.
+            </p>
+            <p class="hero-description">
+                Passionate about silicon layout precision, matching architectures, substrate noise isolation, and custom CAD layout automation scripts.
+            </p>
+            <div class="hero-actions">
+                <a href="#chip-section" class="btn btn-primary">Explore Interactive Chip</a>
+                <a href="mailto:ganishvar@gmail.com" class="btn btn-secondary">Contact Directly</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Interactive Chip Section -->
+    <section id="chip-section" class="chip-section">
+        <div class="section-header">
+            <h2>Interactive Silicon Die</h2>
+            <p>Click on any layout block below to zoom in and probe technology specs, design hierarchies, or launch custom SKILL automation simulators.</p>
+        </div>
+
+        <!-- Central Design Canvas -->
+        <div class="canvas-wrapper">
+            <div class="virtuoso-canvas-area" id="canvas-container">
+                <div class="canvas-viewport" id="viewport">
+                    <!-- SVG Silicon Chip Layout (Vertical) -->
+                    <svg id="silicon-chip" viewBox="0 0 500 1300" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+                        
+                        <!-- Substrate Boundary (P-Well background fill) -->
+                        <rect x="10" y="10" width="480" height="1280" rx="15" fill="var(--pwell-solid)" stroke="var(--pwell)" stroke-width="4" class="chip-substrate layer-pwell" />
+                        
+                        <!-- Guard Rings & Deep Trench Borders -->
+                        <rect x="20" y="20" width="460" height="1260" rx="10" fill="none" stroke="var(--dt)" stroke-width="4" stroke-dasharray="12, 6" class="layer-dt" />
+                        <rect x="26" y="26" width="448" height="1248" rx="8" fill="none" stroke="var(--pwell)" stroke-width="2" class="layer-pwell" />
+                        
+                        <!-- Bond Pads (Left & Right Side) -->
+                        <g class="bond-pads">
+                            <!-- Left Side Pads (6) -->
+                            <g class="pad" transform="translate(30, 90)"><rect width="40" height="40" class="layer-metal3"/><text x="10" y="25" class="pad-label">VDD</text></g>
+                            <g class="pad" transform="translate(30, 290)"><rect width="40" height="40" class="layer-metal3"/><text x="10" y="25" class="pad-label">CLK</text></g>
+                            <g class="pad" transform="translate(30, 490)"><rect width="40" height="40" class="layer-metal3"/><text x="10" y="25" class="pad-label">IN0</text></g>
+                            <g class="pad" transform="translate(30, 690)"><rect width="40" height="40" class="layer-metal3"/><text x="10" y="25" class="pad-label">IN1</text></g>
+                            <g class="pad" transform="translate(30, 890)"><rect width="40" height="40" class="layer-metal3"/><text x="8" y="25" class="pad-label">BIAS</text></g>
+                            <g class="pad" transform="translate(30, 1090)"><rect width="40" height="40" class="layer-metal3"/><text x="5" y="25" class="pad-label">VREF</text></g>
+
+                            <!-- Right Side Pads (6) -->
+                            <g class="pad" transform="translate(430, 90)"><rect width="40" height="40" class="layer-metal3"/><text x="10" y="25" class="pad-label">VSS</text></g>
+                            <g class="pad" transform="translate(430, 290)"><rect width="40" height="40" class="layer-metal3"/><text x="8" y="25" class="pad-label">OUT</text></g>
+                            <g class="pad" transform="translate(430, 490)"><rect width="40" height="40" class="layer-metal3"/><text x="8" y="25" class="pad-label">ENA</text></g>
+                            <g class="pad" transform="translate(430, 690)"><rect width="40" height="40" class="layer-metal3"/><text x="8" y="25" class="pad-label">FLT</text></g>
+                            <g class="pad" transform="translate(430, 890)"><rect width="40" height="40" class="layer-metal3"/><text x="8" y="25" class="pad-label">SDA</text></g>
+                            <g class="pad" transform="translate(430, 1090)"><rect width="40" height="40" class="layer-metal3"/><text x="8" y="25" class="pad-label">SCL</text></g>
+                        </g>
+
+                        <!-- Translucent Routing Tracks linking pads to blocks -->
+                        <g class="routing-tracks">
+                            <!-- VDD (Left 90) to Block 1 -->
+                            <path d="M 70 110 L 120 110" stroke="var(--metal1)" stroke-width="8" stroke-opacity="0.65" fill="none" class="layer-metal1" />
+                            <!-- VSS (Right 90) to Block 1 -->
+                            <path d="M 430 110 L 380 110" stroke="var(--metal2)" stroke-width="6" stroke-opacity="0.65" fill="none" class="layer-metal2" />
+                            <!-- CLK (Left 290) to Block 2 -->
+                            <path d="M 70 310 L 120 310" stroke="var(--metal3)" stroke-width="6" stroke-opacity="0.65" fill="none" class="layer-metal3" />
+                            <!-- OUT (Right 290) to Block 2 -->
+                            <path d="M 430 310 L 380 310" stroke="var(--metal1)" stroke-width="8" stroke-opacity="0.65" fill="none" class="layer-metal1" />
+                            <!-- IN0 (Left 490) to Block 3 -->
+                            <path d="M 70 510 L 120 510" stroke="var(--metal2)" stroke-width="6" stroke-opacity="0.65" fill="none" class="layer-metal2" />
+                            <!-- ENA (Right 490) to Block 3 -->
+                            <path d="M 430 510 L 380 510" stroke="var(--metal3)" stroke-width="6" stroke-opacity="0.65" fill="none" class="layer-metal3" />
+                            <!-- IN1 (Left 690) to Block 4 -->
+                            <path d="M 70 710 L 120 710" stroke="var(--metal1)" stroke-width="8" stroke-opacity="0.65" fill="none" class="layer-metal1" />
+                            <!-- FLT (Right 690) to Block 4 -->
+                            <path d="M 430 710 L 380 710" stroke="var(--metal2)" stroke-width="6" stroke-opacity="0.65" fill="none" class="layer-metal2" />
+                            <!-- BIAS (Left 890) to Block 5 -->
+                            <path d="M 70 910 L 120 910" stroke="var(--metal3)" stroke-width="6" stroke-opacity="0.65" fill="none" class="layer-metal3" />
+                            <!-- SDA (Right 890) to Block 5 -->
+                            <path d="M 430 910 L 380 910" stroke="var(--metal1)" stroke-width="8" stroke-opacity="0.65" fill="none" class="layer-metal1" />
+                            
+                            <!-- Vias on routing corners -->
+                            <rect x="115" y="105" width="10" height="10" fill="var(--via)" class="layer-via" />
+                            <rect x="375" y="105" width="10" height="10" fill="var(--via)" class="layer-via" />
+                            <rect x="115" y="305" width="10" height="10" fill="var(--via)" class="layer-via" />
+                            <rect x="375" y="305" width="10" height="10" fill="var(--via)" class="layer-via" />
+                            <rect x="115" y="505" width="10" height="10" fill="var(--via)" class="layer-via" />
+                            <rect x="375" y="505" width="10" height="10" fill="var(--via)" class="layer-via" />
+                            <rect x="115" y="705" width="10" height="10" fill="var(--via)" class="layer-via" />
+                            <rect x="375" y="705" width="10" height="10" fill="var(--via)" class="layer-via" />
+                            <rect x="115" y="905" width="10" height="10" fill="var(--via)" class="layer-via" />
+                            <rect x="375" y="905" width="10" height="10" fill="var(--via)" class="layer-via" />
+                        </g>
+
+                        <!-- ==================== 5 MAIN CLICKABLE BLOCKS (Stacked Vertically) ==================== -->
+                        
+                        <!-- BLOCK 1: EXPERIENCE -->
+                        <g class="chip-block" id="block-experience" transform="translate(100, 70)">
+                            <rect width="300" height="180" rx="6" fill="var(--nwell-solid)" stroke="var(--nwell)" stroke-width="2.5" class="block-well layer-nwell" />
+                            <rect x="-3" y="-3" width="306" height="186" rx="9" fill="none" stroke="var(--dt)" stroke-width="2" class="layer-dt" />
+                            <!-- Resistor arrays -->
+                            <path d="M 20 40 L 60 40 L 60 55 L 20 55 L 20 70 L 60 70 L 60 85 L 20 85 L 20 100 L 60 100" stroke="var(--poly)" stroke-width="5" stroke-opacity="0.65" fill="none" class="layer-poly" />
+                            <!-- Transistor grid -->
+                            <g class="transistors" transform="translate(20, 0)">
+                                <rect x="120" y="40" width="100" height="40" fill="var(--nwell-solid)" stroke="var(--nwell)" stroke-width="1.5" class="layer-nwell"/>
+                                <rect x="130" y="30" width="80" height="60" fill="none" stroke="var(--metal1)" stroke-width="3" stroke-opacity="0.65" class="layer-metal1"/>
+                                <line x1="140" y1="25" x2="140" y2="95" stroke="var(--poly)" stroke-width="5" stroke-opacity="0.65" class="layer-poly"/>
+                                <line x1="160" y1="25" x2="160" y2="95" stroke="var(--poly)" stroke-width="5" stroke-opacity="0.65" class="layer-poly"/>
+                                <line x1="180" y1="25" x2="180" y2="95" stroke="var(--poly)" stroke-width="5" stroke-opacity="0.65" class="layer-poly"/>
+                                <line x1="200" y1="25" x2="200" y2="95" stroke="var(--poly)" stroke-width="5" stroke-opacity="0.65" class="layer-poly"/>
+                                <!-- Contacts -->
+                                <rect x="148" y="45" width="4" height="4" fill="var(--contact)" class="layer-contact"/>
+                                <rect x="148" y="70" width="4" height="4" fill="var(--contact)" class="layer-contact"/>
+                                <rect x="168" y="45" width="4" height="4" fill="var(--contact)" class="layer-contact"/>
+                                <rect x="168" y="70" width="4" height="4" fill="var(--contact)" class="layer-contact"/>
+                            </g>
+                            <text x="150" y="130" class="block-title" text-anchor="middle">EXPERIENCE</text>
+                            <text x="150" y="150" class="block-subtitle" text-anchor="middle">TI & NLC INTERNSHIPS</text>
+                            <text x="150" y="165" class="cell-tag" text-anchor="middle">cell_inst: EXP_01</text>
+                        </g>
+
+                        <!-- BLOCK 2: SKILLS -->
+                        <g class="chip-block" id="block-skills" transform="translate(100, 310)">
+                            <rect width="300" height="180" rx="6" fill="var(--pwell-solid)" stroke="var(--pwell)" stroke-width="2.5" class="block-well layer-pwell" />
+                            <rect x="-3" y="-3" width="306" height="186" rx="9" fill="none" stroke="var(--dt)" stroke-width="2" class="layer-dt" />
+                            <!-- Matched layout -->
+                            <path d="M 20 30 L 100 30 M 20 50 L 100 50 M 20 70 L 100 70 M 20 90 L 100 90" stroke="var(--metal1)" stroke-width="5" stroke-opacity="0.65" fill="none" class="layer-metal1" />
+                            <path d="M 100 40 L 20 40 M 100 60 L 20 60 M 100 80 L 20 80 M 100 100 L 20 100" stroke="var(--metal2)" stroke-width="5" stroke-opacity="0.65" fill="none" class="layer-metal2" />
+                            <line x1="20" y1="30" x2="20" y2="90" stroke="var(--metal1)" stroke-width="6" class="layer-metal1"/>
+                            <line x1="100" y1="40" x2="100" y2="100" stroke="var(--metal2)" stroke-width="6" class="layer-metal2"/>
+                            <!-- Routing traces -->
+                            <path d="M 140 30 L 240 30 L 240 90 L 180 90 L 180 110" stroke="var(--metal3)" stroke-width="4" stroke-opacity="0.65" fill="none" class="layer-metal3" />
+                            <rect x="235" y="85" width="10" height="10" fill="var(--via)" class="layer-via" />
+                            <text x="150" y="130" class="block-title" text-anchor="middle">SKILLS</text>
+                            <text x="150" y="150" class="block-subtitle" text-anchor="middle">CAD, HARDWARE & PL</text>
+                            <text x="150" y="165" class="cell-tag" text-anchor="middle">cell_inst: SKL_02</text>
+                        </g>
+
+                        <!-- BLOCK 3: LAYOUT PROJECTS -->
+                        <g class="chip-block" id="block-layout-projects" transform="translate(100, 550)">
+                            <rect width="300" height="180" rx="6" fill="var(--nwell-solid)" stroke="var(--nwell)" stroke-width="2.5" class="block-well layer-nwell" />
+                            <rect x="-3" y="-3" width="306" height="186" rx="9" fill="none" stroke="var(--dt)" stroke-width="2" class="layer-dt" />
+                            <!-- Op-amp like matched layout -->
+                            <g transform="translate(30, 20)">
+                                <rect x="0" y="0" width="50" height="40" fill="var(--pwell-solid)" stroke="var(--pwell)" stroke-width="1.5" class="layer-pwell"/>
+                                <rect x="60" y="0" width="50" height="40" fill="var(--pwell-solid)" stroke="var(--pwell)" stroke-width="1.5" class="layer-pwell"/>
+                                <rect x="120" y="0" width="50" height="40" fill="var(--pwell-solid)" stroke="var(--pwell)" stroke-width="1.5" class="layer-pwell"/>
+                                <rect x="180" y="0" width="50" height="40" fill="var(--pwell-solid)" stroke="var(--pwell)" stroke-width="1.5" class="layer-pwell"/>
+                                <path d="M 25 10 L 205 10" stroke="var(--metal1)" stroke-width="3" stroke-opacity="0.65" fill="none" class="layer-metal1"/>
+                                <path d="M 85 30 L 205 30" stroke="var(--metal2)" stroke-width="3" stroke-opacity="0.65" fill="none" class="layer-metal2"/>
+                                <path d="M 25 10 L 25 50 L 145 50 L 145 40" stroke="var(--metal3)" stroke-width="3" stroke-opacity="0.65" fill="none" class="layer-metal3"/>
+                            </g>
+                            <text x="150" y="130" class="block-title" text-anchor="middle">LAYOUT PROJECTS</text>
+                            <text x="150" y="150" class="block-subtitle" text-anchor="middle">IP DESIGN & SKILL TOOLS</text>
+                            <text x="150" y="165" class="cell-tag" text-anchor="middle">cell_inst: LAY_03</text>
+                        </g>
+
+                        <!-- BLOCK 4: ELECTRICAL PROJECTS -->
+                        <g class="chip-block" id="block-elec-projects" transform="translate(100, 790)">
+                            <rect width="300" height="180" rx="6" fill="var(--pwell-solid)" stroke="var(--pwell)" stroke-width="2.5" class="block-well layer-pwell" />
+                            <rect x="-3" y="-3" width="306" height="186" rx="9" fill="none" stroke="var(--dt)" stroke-width="2" class="layer-dt" />
+                            <!-- Node loops -->
+                            <g transform="translate(45, 20)">
+                                <circle cx="50" cy="40" r="15" fill="none" stroke="var(--metal1)" stroke-width="3" stroke-opacity="0.65" class="layer-metal1"/>
+                                <circle cx="120" cy="40" r="15" fill="none" stroke="var(--metal2)" stroke-width="3" stroke-opacity="0.65" class="layer-metal2"/>
+                                <circle cx="190" cy="40" r="15" fill="none" stroke="var(--metal3)" stroke-width="3" stroke-opacity="0.65" class="layer-metal3"/>
+                                <path d="M 65 40 L 105 40 M 135 40 L 175 40" stroke="var(--poly)" stroke-width="4" stroke-opacity="0.65" fill="none" class="layer-poly"/>
+                                <rect x="62" y="37" width="6" height="6" fill="var(--contact)" class="layer-contact"/>
+                                <rect x="132" y="37" width="6" height="6" fill="var(--contact)" class="layer-contact"/>
+                            </g>
+                            <text x="150" y="130" class="block-title" text-anchor="middle">ELECTRICAL PROJECTS</text>
+                            <text x="150" y="150" class="block-subtitle" text-anchor="middle">ECU, CAN & SIMULATIONS</text>
+                            <text x="150" y="165" class="cell-tag" text-anchor="middle">cell_inst: ELC_04</text>
+                        </g>
+
+                        <!-- BLOCK 5: PUBLICATIONS -->
+                        <g class="chip-block" id="block-publications" transform="translate(100, 1030)">
+                            <rect width="300" height="180" rx="6" fill="var(--nwell-solid)" stroke="var(--nwell)" stroke-width="2.5" class="block-well layer-nwell" />
+                            <rect x="-3" y="-3" width="306" height="186" rx="9" fill="none" stroke="var(--dt)" stroke-width="2" class="layer-dt" />
+                            <!-- Grid cell matrix -->
+                            <g transform="translate(45, 20)">
+                                <line x1="10" y1="10" x2="190" y2="10" stroke="var(--metal1)" stroke-width="4" stroke-opacity="0.65" class="layer-metal1"/>
+                                <line x1="10" y1="35" x2="190" y2="35" stroke="var(--metal1)" stroke-width="4" stroke-opacity="0.65" class="layer-metal1"/>
+                                <line x1="10" y1="60" x2="190" y2="60" stroke="var(--metal1)" stroke-width="4" stroke-opacity="0.65" class="layer-metal1"/>
+                                
+                                <line x1="30" y1="5" x2="30" y2="80" stroke="var(--poly)" stroke-width="3" stroke-opacity="0.65" class="layer-poly"/>
+                                <line x1="75" y1="5" x2="75" y2="80" stroke="var(--poly)" stroke-width="3" stroke-opacity="0.65" class="layer-poly"/>
+                                <line x1="120" y1="5" x2="120" y2="80" stroke="var(--poly)" stroke-width="3" stroke-opacity="0.65" class="layer-poly"/>
+                                <line x1="165" y1="5" x2="165" y2="80" stroke="var(--poly)" stroke-width="3" stroke-opacity="0.65" class="layer-poly"/>
+                                <rect x="27" y="7" width="6" height="6" fill="var(--via)" class="layer-via" />
+                                <rect x="117" y="32" width="6" height="6" fill="var(--via)" class="layer-via" />
+                                <rect x="162" y="57" width="6" height="6" fill="var(--via)" class="layer-via" />
+                            </g>
+                            <text x="150" y="130" class="block-title" text-anchor="middle">PUBLICATIONS</text>
+                            <text x="150" y="150" class="block-subtitle" text-anchor="middle">SPRINGER PAPERS & DOI</text>
+                            <text x="150" y="165" class="cell-tag" text-anchor="middle">cell_inst: PUB_05</text>
+                        </g>
+                    </svg>
+                </div>
+                
+                <!-- Simple overlay cell text display -->
+                <div class="chip-hud-overlay" id="cell-hud-display">
+                    Active View: <span id="cell-name-display">ganishvar_chip(layout)</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== OVERLAYS CONTAINER (MODALS) ==================== -->
+    <div class="overlay-container" id="overlay-container">
+        <button class="close-overlay-btn" id="close-overlay-btn"><span>×</span> Close Details (ESC)</button>
+        
+        <!-- EXPERIENCE SECTION -->
+        <div class="overlay-content" id="content-experience">
+            <div class="overlay-header">
+                <h2>Experience & Internships</h2>
+                <div class="tech-spec-bar">LBC9 & LBC10 Process Nodes | Cadence Virtuoso Platform</div>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-badge">2025</div>
+                    <div class="timeline-card">
+                        <h3>Texas Instruments India — Analog Layout Intern (Physical Design)</h3>
+                        <div class="timeline-date">Jan 2025 – July 2025 | Bengaluru, India</div>
+                        <ul class="timeline-bullets">
+                            <li>Executed full-cycle analog layout development from estimation to layout verification using <strong>Cadence Virtuoso</strong> on Unix-Based LSF Servers.</li>
+                            <li>Designed and verified critical blocks including <strong>comparators, bandgaps, current mirrors, differential pairs, level shifters, Schmitt triggers, and I/O buffers</strong>.</li>
+                            <li>Performed detailed floorplanning, manual routing, and <strong>DRC/LVS/QRC physical verification</strong> for both <strong>130 nm and 65 nm Chips</strong>.</li>
+                            <li>Automated recurring layout tasks through custom <strong>SKILL scripts</strong> for auto-routing, path buffer extraction, and top-level parasitic analysis.</li>
+                            <li>Collaborated directly with circuit designers to resolve signal integrity and layout matching constraints under tight tape-out schedules.</li>
+                            <li>Acquired hands-on experience in <strong>Assembly Rule Checking (ARC)</strong> and package-level considerations.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-badge">2024</div>
+                    <div class="timeline-card">
+                        <h3>NLC India Limited — Engineering Intern</h3>
+                        <div class="timeline-date">Jun 2024 – Jul 2024 | Neyveli, Tamil Nadu</div>
+                        <ul class="timeline-bullets">
+                            <li>Conducted technical feasibility study on integrating <strong>Revolution Pi</strong> industrial controllers with existing PLC systems on Special Mining Equipment for IoT-driven telemetry.</li>
+                            <li>Implemented <strong>PROFIBUS-based communication</strong> between Siemens PLC and RevPi to control NO/NC switches remotely.</li>
+                            <li>Delivered detailed engineering reports outlining technical, operational, and economic feasibility of integration.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-badge">EDU</div>
+                    <div class="timeline-card bg-academic">
+                        <h3>Amrita Vishwa Vidyapeetham</h3>
+                        <div class="timeline-date">B.Tech in Electrical and Electronics Engineering | 2021 – 2025</div>
+                        <p><strong>CGPA: 8.45 (First Class with Distinction)</strong></p>
+                        <p>Specialization coursework in Analog Electronics, IC design principles, and physical design automation. Active member of technical clubs focusing on embedded control systems.</p>
+                        <div style="margin-top: 15px; border-top: 1px dashed var(--border-color); padding-top: 10px;">
+                            <h4 style="font-size: 13px; color: #FFFFFF; margin-bottom: 4px; font-family: 'Inter', sans-serif;">Maharishi International Residential School, Kanchipuram</h4>
+                            <div class="timeline-date" style="margin-bottom: 8px;">Higher Secondary (CBSE) | 2018 – 2020</div>
+                            <h4 style="font-size: 13px; color: #FFFFFF; margin-bottom: 4px; font-family: 'Inter', sans-serif;">Jawahar Higher Secondary School, Neyveli</h4>
+                            <div class="timeline-date" style="margin-bottom: 0;">Senior Secondary (CBSE) | 2007 – 2018</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SKILLS SECTION -->
+        <div class="overlay-content" id="content-skills">
+            <div class="overlay-header">
+                <h2>Skills & Tech Stack</h2>
+                <div class="tech-spec-bar">Hardware, Software & Toolchain Matrix</div>
+            </div>
+            
+            <div class="skills-grids-clean">
+                <div class="skills-card">
+                    <h3>Domains & Expertise</h3>
+                    <div class="skills-tags">
+                        <span class="skill-tag">Analog Layout</span>
+                        <span class="skill-tag">Physical Verification (DRC/LVS/QRC)</span>
+                        <span class="skill-tag">EDA Automation</span>
+                        <span class="skill-tag">Analog Design</span>
+                        <span class="skill-tag">Power Electronics</span>
+                        <span class="skill-tag">Embedded Systems</span>
+                    </div>
+                </div>
+                
+                <div class="skills-card">
+                    <h3>EDA Tools & Software</h3>
+                    <div class="skills-tags">
+                        <span class="skill-tag tool-tag">Cadence Virtuoso</span>
+                        <span class="skill-tag tool-tag">Assura LVS/DRC</span>
+                        <span class="skill-tag tool-tag">Matlab / Simulink</span>
+                        <span class="skill-tag tool-tag">Xilinx Vivado</span>
+                        <span class="skill-tag tool-tag">LabView (CLAD Certified)</span>
+                    </div>
+                </div>
+
+                <div class="skills-card">
+                    <h3>Programming Languages</h3>
+                    <div class="skills-tags">
+                        <span class="skill-tag lang-tag">SKILL Language</span>
+                        <span class="skill-tag lang-tag">Python (ML/DL libraries)</span>
+                        <span class="skill-tag lang-tag">C Language</span>
+                        <span class="skill-tag lang-tag">Verilog HDL (Beginner)</span>
+                    </div>
+                </div>
+
+                <div class="skills-card">
+                    <h3>Hardware Interfaces</h3>
+                    <div class="skills-tags">
+                        <span class="skill-tag hw-tag">Siemens / Delta / Omron PLCs</span>
+                        <span class="skill-tag hw-tag">Raspberry Pi 4</span>
+                        <span class="skill-tag hw-tag">Revolution Pi</span>
+                        <span class="skill-tag hw-tag">CAN Bus (TJA1040/MCP2515)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LAYOUT PROJECTS & SKILL PROJECTS SECTION -->
+        <div class="overlay-content" id="content-layout-projects">
+            <div class="overlay-header">
+                <h2>Layout & Automation Projects</h2>
+                <div class="tech-spec-bar">Silicon IP Layouts & SKILL Script Automation Tools</div>
+            </div>
+            
+            <div class="project-explorer-hint" id="explorer-top-hint">
+                <p>Select any project cell block below to step into its layout hierarchy details or launch the automation script simulators.</p>
+            </div>
+            
+            <!-- Grid containing 6 cards -->
+            <div class="proj-explorer-grid" id="projects-top-grid">
+                <!-- Project Card 1: Voltage Detection -->
+                <div class="proj-explorer-card" data-project="voltage_det">
+                    <div class="tech-badge">130nm LBC9</div>
+                    <h3>Voltage Detection IP Layout</h3>
+                    <p class="proj-meta">Multi-Stage Voltage Detector core with tight area constraints, matching cells, and 4-level deep cell hierarchy.</p>
+                    <div class="drc-badge">DRC & LVS clean</div>
+                    <div class="explore-btn">Open Block Hierarchy (4 Levels) →</div>
+                </div>
+
+                <!-- Project Card 2: Motor Driver -->
+                <div class="proj-explorer-card" data-project="motor_driver">
+                    <div class="tech-badge">65nm LBC10</div>
+                    <h3>Motor Driver IP Layout</h3>
+                    <p class="proj-meta">Small-scale driver IPs implementing parasitic shielding, matched resistor arrays, and Deep Trench (DT) isolation.</p>
+                    <div class="drc-badge">DRC & LVS clean</div>
+                    <div class="explore-btn">Open Block Hierarchy (2 Levels) →</div>
+                </div>
+
+                <!-- Project Card 3: Translation Chip -->
+                <div class="proj-explorer-card" data-project="translation_chip">
+                    <div class="tech-badge">130nm LBC7</div>
+                    <h3>Translation Chip Test Block</h3>
+                    <p class="proj-meta">Translation structures featuring protective ESD clamp cells and wide N-well guards on a DT-less process.</p>
+                    <div class="drc-badge">DRC & LVS clean</div>
+                    <div class="explore-btn">Open Block Hierarchy (2 Levels) →</div>
+                </div>
+
+                <!-- Project Card 4: SKILL Autorouter -->
+                <div class="proj-explorer-card skill-project-card" data-project="router_sim">
+                    <div class="tech-badge skill-badge">SKILL Script</div>
+                    <h3>SKILL Digital Core Autorouter</h3>
+                    <p class="proj-meta">Automation script for routing standard cells, pins, and pads inside the digital core block directly.</p>
+                    <div class="drc-badge">DRC & LVS Check Ready</div>
+                    <div class="explore-btn">Launch Script Simulator →</div>
+                </div>
+
+                <!-- Project Card 5: SKILL ATOP -->
+                <div class="proj-explorer-card skill-project-card" data-project="atop_sim">
+                    <div class="tech-badge skill-badge">SKILL Script</div>
+                    <h3>ATOP Parasitics Analyzer</h3>
+                    <p class="proj-meta">Extracts block-level parasitics incorporating top-level metal overlaps above the block via XOR logic overlays.</p>
+                    <div class="drc-badge">DRC & LVS Check Ready</div>
+                    <div class="explore-btn">Launch Script Simulator →</div>
+                </div>
+
+                <!-- Project Card 6: SKILL Pathbuffer -->
+                <div class="proj-explorer-card skill-project-card" data-project="pathbuf_sim">
+                    <div class="tech-badge skill-badge">SKILL Script</div>
+                    <h3>Pathbuffer Delay Analyzer</h3>
+                    <p class="proj-meta">Evaluates input load capacitance against limits to analyze delay skew and calculate buffer requirement logs.</p>
+                    <div class="drc-badge">DRC & LVS Check Ready</div>
+                    <div class="explore-btn">Launch Script Simulator →</div>
+                </div>
+            </div>
+
+            <!-- CAD Explorer Drill-down View (Used for IPs) -->
+            <div class="drilldown-view-container hidden" id="drilldown-container">
+                <div class="drilldown-nav-bar">
+                    <button class="action-btn" id="drilldown-back-btn">← Step Out</button>
+                    <div class="drilldown-crumbs font-mono" id="drilldown-crumbs">Hierarchy: top</div>
+                </div>
+                
+                <div class="drilldown-flex-layout">
+                    <!-- Left: Graphic -->
+                    <div class="drilldown-canvas-panel">
+                        <div class="canvas-panel-header">
+                            <span id="drilldown-cell-title" class="font-mono">CELL: top_view</span>
+                            <span id="drilldown-cell-scale" class="cell-scale-factor font-mono">1X SCALE</span>
+                        </div>
+                        <div class="drilldown-graphics-box" id="drilldown-graphics">
+                            <!-- Injected SVG -->
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Info -->
+                    <div class="drilldown-details-panel">
+                        <div class="details-section">
+                            <h4 class="details-section-hdr">Properties</h4>
+                            <table class="props-table" id="drilldown-props"></table>
+                        </div>
+                        <div class="details-section">
+                            <h4 class="details-section-hdr">Design Specifications</h4>
+                            <div class="details-body-text" id="drilldown-specs"></div>
+                        </div>
+                        <div class="details-section">
+                            <h4 class="details-section-hdr">Layout Techniques & Role</h4>
+                            <div class="details-body-text" id="drilldown-role"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Script Simulator Panel (Used for SKILL tools) -->
+            <div class="drilldown-view-container hidden" id="simulator-container">
+                <div class="drilldown-nav-bar">
+                    <button class="action-btn" id="simulator-back-btn">← Back to Projects</button>
+                    <div class="drilldown-crumbs font-mono" id="simulator-crumbs">Hierarchy: top / skill_simulators</div>
+                </div>
+                
+                <div class="drilldown-flex-layout">
+                    <!-- Left: Simulator Canvas -->
+                    <div class="drilldown-canvas-panel">
+                        <div class="canvas-panel-header">
+                            <span id="sim-cell-title" class="font-mono">CELL: SKILL_SIM_CELL</span>
+                            <span class="cell-scale-factor font-mono">DYNAMIC STIMULUS</span>
+                        </div>
+                        <div class="drilldown-graphics-box">
+                            
+                            <!-- SIMULATOR 1: AUTOROUTER -->
+                            <div class="sim-panel-body" id="sim-body-router">
+                                <svg id="sim-router-svg" viewBox="0 0 400 220" width="100%" height="100%">
+                                    <!-- Digital Core boundary -->
+                                    <rect x="50" y="30" width="300" height="160" fill="none" stroke="var(--dt)" stroke-width="2" class="layer-dt" stroke-dasharray="8, 4"/>
+                                    <text x="60" y="45" fill="var(--dt)" font-size="10" font-family="monospace">DIGITAL CORE CELL</text>
+                                    
+                                    <!-- Internal Standard Cells -->
+                                    <g transform="translate(70, 70)">
+                                        <rect width="70" height="80" fill="rgba(30,41,59,0.7)" stroke="var(--metal2)" stroke-width="1.5" rx="3" class="layer-metal2"/>
+                                        <text x="35" y="45" text-anchor="middle" fill="#FFFFFF" font-size="10" font-family="monospace">AND_GATE</text>
+                                        <circle cx="35" cy="15" r="3.5" fill="var(--via)" class="layer-via"/>
+                                    </g>
+                                    <g transform="translate(260, 70)">
+                                        <rect width="70" height="80" fill="rgba(30,41,59,0.7)" stroke="var(--metal2)" stroke-width="1.5" rx="3" class="layer-metal2"/>
+                                        <text x="35" y="45" text-anchor="middle" fill="#FFFFFF" font-size="10" font-family="monospace">INV_GATE</text>
+                                        <circle cx="35" cy="65" r="3.5" fill="var(--via)" class="layer-via"/>
+                                    </g>
+ 
+                                    <!-- Standard cell pins -->
+                                    <circle cx="140" cy="110" r="4" fill="var(--via)" id="pin-and-out" class="layer-via"/>
+                                    <circle cx="260" cy="110" r="4" fill="var(--via)" id="pin-inv-in" class="layer-via"/>
+                                    <circle cx="105" cy="85" r="4" fill="var(--contact)" id="pin-and-in" class="layer-contact"/>
+                                    <circle cx="295" cy="135" r="4" fill="var(--contact)" id="pin-inv-out" class="layer-contact"/>
+ 
+                                    <!-- Routes (Solid paths) -->
+                                    <!-- Metal 1 (Green) horizontal segment -->
+                                    <path id="sim-route-path-1" d="M 105 85 L 105 55 L 200 55" stroke="var(--metal1)" stroke-opacity="0" stroke-width="5" fill="none" stroke-dasharray="250" stroke-dashoffset="250" class="layer-metal1" />
+                                    <!-- Metal 2 (Cyan) vertical segment -->
+                                    <path id="sim-route-path-2" d="M 140 110 L 210 110 L 210 135 L 295 135" stroke="var(--metal2)" stroke-opacity="0" stroke-width="5" fill="none" stroke-dasharray="250" stroke-dashoffset="250" class="layer-metal2" />
+                                    
+                                    <!-- Routing Vias -->
+                                    <rect x="207.5" y="107.5" width="5" height="5" fill="var(--via)" id="sim-r-via-1" opacity="0" class="layer-via"/>
+                                    <rect x="207.5" y="132.5" width="5" height="5" fill="var(--via)" id="sim-r-via-2" opacity="0" class="layer-via"/>
+                                </svg>
+                            </div>
+                            
+                            <!-- SIMULATOR 2: ATOP -->
+                            <div class="sim-panel-body hidden" id="sim-body-atop">
+                                <svg id="sim-atop-svg" viewBox="0 0 400 220" width="100%" height="100%">
+                                    <!-- Block Level boundary -->
+                                    <rect x="80" y="40" width="240" height="140" fill="none" stroke="var(--metal1)" stroke-width="1.5" class="layer-metal1"/>
+                                    <text x="90" y="55" fill="var(--metal1)" font-size="9" font-family="monospace">BLOCK_LEVEL_CELL</text>
+ 
+                                    <!-- Block Metal 1 Wire (Green) -->
+                                    <path d="M 100 110 L 300 110" stroke="var(--metal1)" stroke-width="6" stroke-opacity="0.6" fill="none" class="layer-metal1"/>
+                                    <text x="105" y="100" fill="var(--metal1)" font-size="8" font-family="monospace">Block Metal 1</text>
+                                    
+                                    <!-- Top Level Metal 2 Wire (Translucent Cyan overlapping above) -->
+                                    <path d="M 200 20 L 200 200" stroke="var(--metal2)" stroke-width="6" stroke-opacity="0.2" fill="none" class="layer-metal2" id="top-metal-overlay"/>
+                                    <text x="210" y="30" fill="var(--metal2)" font-size="8" font-family="monospace">Top Metal 2 (Overlap)</text>
+ 
+                                    <!-- XOR Extracted Nodes (Fades in) -->
+                                    <g id="sim-atop-parasitics" opacity="0">
+                                        <!-- Coupling Capacitance marker at overlap -->
+                                        <circle cx="200" cy="110" r="10" fill="none" stroke="var(--via)" stroke-width="1.5" stroke-dasharray="2,2" class="layer-via"/>
+                                        <!-- Resistor components inside block -->
+                                        <path d="M 130 106 L 135 114 L 143 106 L 151 114 L 159 106 L 164 110" stroke="var(--metal3)" stroke-width="2" fill="none" class="layer-metal3"/>
+                                        <!-- Cap symbols -->
+                                        <line x1="200" y1="110" x2="200" y2="140" stroke="#EC4899" stroke-width="1.5"/>
+                                        <line x1="192" y1="140" x2="208" y2="140" stroke="#EC4899" stroke-width="2.5"/>
+                                        <line x1="192" y1="144" x2="208" y2="144" stroke="#94A3B8" stroke-width="2.5"/>
+                                        <line x1="200" y1="144" x2="200" y2="160" stroke="#94A3B8" stroke-width="1.5"/>
+                                        
+                                        <text x="212" y="152" fill="#EC4899" font-size="8" font-family="monospace">Cc (Top M2 to Block M1): 28.5 fF</text>
+                                        <text x="135" y="98" fill="var(--metal3)" font-size="7" font-family="monospace">Rp: 0.85 Ohm</text>
+                                    </g>
+                                </svg>
+                            </div>
+                            
+                            <!-- SIMULATOR 3: PATHBUFFER -->
+                            <div class="sim-panel-body hidden" id="sim-body-pathbuf">
+                                <div class="pathbuf-interactive-area">
+                                    <svg id="sim-pathbuf-svg" viewBox="0 0 400 160" width="100%" height="80%">
+                                        <!-- Logic Buffer cell -->
+                                        <g transform="translate(120, 45)">
+                                            <polygon points="10,10 60,35 10,60" fill="none" stroke="var(--metal1)" stroke-width="2" class="layer-metal1"/>
+                                            <circle cx="65" cy="35" r="5" fill="none" stroke="var(--metal1)" stroke-width="2" class="layer-metal1"/>
+                                            <text x="18" y="39" fill="var(--metal1)" font-size="10" font-family="monospace">BUFFER</text>
+                                        </g>
+                                        <!-- Inputs/Outputs wires -->
+                                        <line x1="20" y1="80" x2="130" y2="80" stroke="var(--metal2)" stroke-width="4" class="layer-metal2"/>
+                                        <line x1="190" y1="80" x2="380" y2="80" stroke="var(--metal3)" stroke-width="4" class="layer-metal3"/>
+                                        
+                                        <!-- Waveforms -->
+                                        <path d="M 20 140 L 60 140 L 70 110 L 110 110" fill="none" stroke="var(--metal2)" stroke-width="2" id="sim-pb-wave-in" opacity="0.4"/>
+                                        <path d="M 190 140 L 270 140 L 310 110 L 370 110" fill="none" stroke="var(--metal3)" stroke-width="2" id="sim-pb-wave-out" opacity="0"/>
+                                    </svg>
+                                    
+                                    <!-- Interactive capacitive load slider -->
+                                    <div class="cap-control-row">
+                                        <label for="cap-slider">Adjust Load Capacitance: <span id="cap-value-display">120 fF</span></label>
+                                        <input type="range" id="cap-slider" min="5" max="300" value="120" step="5">
+                                    </div>
+                                </div>
+                            </div>
+ 
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Sim HUD details -->
+                    <div class="drilldown-details-panel">
+                        <div class="details-section">
+                            <h4 class="details-section-hdr">Stimulus & Controls</h4>
+                            <div class="term-actions" style="margin-bottom: 0;">
+                                <button class="action-btn" id="btn-sim-run">Run Simulation</button>
+                                <button class="action-btn sec" id="btn-sim-reset">Reset</button>
+                            </div>
+                        </div>
+                        <div class="details-section" id="sim-hud-details-box">
+                            <h4 class="details-section-hdr">Simulation Outputs</h4>
+                            <div class="sim-hud-card" id="sim-hud-card-content">
+                                <p style="color: var(--text-secondary);">Stimulus idle. Click "Run Simulation".</p>
+                            </div>
+                        </div>
+                        <div class="details-section">
+                            <h4 class="details-section-hdr">SKILL Script Logs</h4>
+                            <div class="virtuoso-terminal font-mono" id="sim-console-log" style="height: 160px;">
+                                <div class="term-line output">> ready.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+ 
+        <!-- ELECTRICAL PROJECTS -->
+        <div class="overlay-content" id="content-elec-projects">
+            <div class="overlay-header">
+                <h2>Electrical & Board Projects</h2>
+                <div class="tech-spec-bar">Board-level, Control Systems & Telemetry Projects</div>
+            </div>
+            
+            <div class="elec-proj-grid">
+                <div class="elec-proj-card main-card">
+                    <div class="card-glow-edge"></div>
+                    <span class="elec-badge-active">Featured Project</span>
+                    <div class="elec-card-content">
+                        <h3>Development of Low-Cost ECU Using CAN Bus Protocol</h3>
+                        <p class="proj-date">Springer Conference 2025</p>
+                        <p class="proj-desc">Built a fully functional, low-cost Engine Control Unit (ECU) prototype integrating an STM32 MCU, Raspberry Pi 4 coprocessor, and industrial-grade TJA1040 & MCP2515 CAN transceiver modules.</p>
+                        
+                        <div class="elec-inner-hierarchy">
+                            <h4>Project Components & Hierarchy:</h4>
+                            <div class="elec-sub-blocks">
+                                <div class="sub-block-item" data-elec-sub="stm32">
+                                    <h5>STM32 Master Node</h5>
+                                    <p>Handles real-time sensor polling, actuator triggers, and high-frequency CAN packet queuing.</p>
+                                </div>
+                                <div class="sub-block-item" data-elec-sub="rpi4">
+                                    <h5>Raspberry Pi Coprocessor</h5>
+                                    <p>Performs higher-level communication logging, diagnostic dashboard streaming, and telemetry analysis.</p>
+                                </div>
+                                <div class="sub-block-item" data-elec-sub="can">
+                                    <h5>CAN Transceiver Node</h5>
+                                    <p>Based on MCP2515 controllers and TJA1040 physical layers, simulating real automotive bus conditions.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+ 
+                <div class="other-elec-column">
+                    <div class="elec-proj-card">
+                        <h3>Vehicle-to-Load (V2L) Converter Design</h3>
+                        <p class="proj-desc">Power electronics design converting high-voltage EV battery storage pack capacity into household-level grid AC current. Optimized magnetics size and switching losses in simulation models.</p>
+                    </div>
+ 
+                    <div class="elec-proj-card">
+                        <h3>Adaptive Cruise Control & Obstacle Detection Unit</h3>
+                        <p class="proj-desc">Sensor-fusion hardware prototype using ultrasonic/lidar arrays combined with an embedded MCU. Regulates velocity profile based on relative object distances and crash prediction curves.</p>
+                    </div>
+ 
+                    <div class="elec-proj-card">
+                        <h3>Predictive Maintenance & Fault Analysis on DC Motor</h3>
+                        <p class="proj-desc">Industrial predictive system logging thermistor profiles and vibration signatures. Models current draws to predict brush wear and bearing decay cycles prior to structural fail point.</p>
+                    </div>
+ 
+                    <div class="elec-proj-card">
+                        <h3>Strawberry Disease Detection Using CNN</h3>
+                        <p class="proj-desc">Deep learning edge model executing Convolutional Neural Network (CNN) architectures on a Raspberry Pi camera module to identify agricultural blight and foliage mildew in real-time.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+ 
+        <!-- PUBLICATIONS -->
+        <div class="overlay-content" id="content-publications">
+            <div class="overlay-header">
+                <h2>Academic Publications</h2>
+                <div class="tech-spec-bar">Academic Research & Springer Publications</div>
+            </div>
+            
+            <div class="publication-container">
+                <div class="pub-card">
+                    <div class="pub-type-badge">Springer Conference Paper</div>
+                    <h3>Development of Low-Cost ECU Using CAN Bus Protocol</h3>
+                    <div class="pub-authors">Ganishvar S, et al.</div>
+                    <div class="pub-meta">Presented and published at the <strong>Springer International Conference 2025</strong>.</div>
+                    
+                    <div class="pub-divider"></div>
+                    
+                    <h4>Abstract & Overview</h4>
+                    <p class="pub-abstract">
+                        Modern automotive platforms rely on numerous complex Electronic Control Units (ECUs) communicating via Controller Area Network (CAN) buses. This paper proposes a low-cost, open-source architecture for a vehicle ECU utilizing an STM32 microcontroller for high-speed sensor control and a Raspberry Pi 4 for localized data diagnostics. Implementing MCP2515 controllers and TJA1040 transceivers, we showcase robust error containment, message priorities, and remote diagnostic telemetry under simulated EMI noise conditions.
+                    </p>
+ 
+                    <div class="pub-doi-box font-mono">
+                        <span class="doi-label">DOI Indicator:</span>
+                        <a href="https://doi.org/10.1007/978-981-96-9975-9_13" target="_blank" class="doi-link">10.1007/978-981-96-9975-9_13</a>
+                    </div>
+                    
+                    <div class="pub-links">
+                        <a href="https://doi.org/10.1007/978-981-96-9975-9_13" target="_blank" class="pub-action-btn">View Article on Springer Link ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+    <!-- Contact & Footer Section -->
+    <footer id="contact" class="contact-section">
+        <div class="contact-container">
+            <div class="contact-header">
+                <h2>Get In Touch</h2>
+                <p>Interested in analog layout design, tape-out collaboration, or SKILL programming automation? Let's connect.</p>
+            </div>
+            
+            <div class="contact-grid">
+                <a href="mailto:ganishvar@gmail.com" class="contact-card">
+                    <div class="contact-icon email-icon">✉</div>
+                    <h3>Email</h3>
+                    <p class="contact-value">ganishvar@gmail.com</p>
+                    <span class="contact-action">Send Message</span>
+                </a>
+                
+                <a href="https://linkedin.com/in/ganishvar-s-38897a221" target="_blank" class="contact-card">
+                    <div class="contact-icon linkedin-icon">in</div>
+                    <h3>LinkedIn</h3>
+                    <p class="contact-value">ganishvar-s-38897a221</p>
+                    <span class="contact-action">View Profile</span>
+                </a>
+                
+                <div class="contact-card">
+                    <div class="contact-icon phone-icon">📞</div>
+                    <h3>Phone</h3>
+                    <p class="contact-value">+91 8056632583</p>
+                    <span class="contact-action-static">Call Directly</span>
+                </div>
+                
+                <div class="contact-card">
+                    <div class="contact-icon location-icon">📍</div>
+                    <h3>Location</h3>
+                    <p class="contact-value">Neyveli, Tamil Nadu, India</p>
+                    <span class="contact-action-static">Available for Relocation</span>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="copyright">© 2026 Ganishvar S | Analog Layout Engineer portfolio</p>
+                <div class="drc-badge-footer">
+                    <span class="pass-dot"></span> LVS MATCHED & DRC CLEAN
+                </div>
+            </div>
+        </div>
+    </footer>
+ 
+    <!-- Core Logic script -->
+    <script src="app.js"></script>
+</body>
+</html>
